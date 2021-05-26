@@ -1,4 +1,6 @@
 import streamlit as st
+import logging
+
 import os
 import re
 
@@ -19,4 +21,7 @@ with open(a, 'r') as f:
             newdata=re.sub('<head>','<head>' + code, data)
             f.write(newdata)
 
-st.title("Hello worl   d !")
+st.title("Hello worl   d ! It's Arthur ALLIOUX")
+input = st.text_input('Variable', 'exemple')
+logging.warning('La variable est ' + input)
+st.write('The value is', input)

@@ -8,6 +8,27 @@ from pytrends.request import TrendReq
 import matplotlib.pyplot as plt
 import os
 import re
+import functools
+import time
+import collections
+
+def timer(func):
+    """Print the runtime of the decorated function"""
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        start_time = time.perf_counter()    # 1
+        value = func(*args, **kwargs)
+        end_time = time.perf_counter()      # 2
+        run_time = end_time - start_time    # 3
+        logging.warning(f"Finished {func.__name__!r} in {run_time:.4f} secs")
+        return value
+    return wrapper_timer
+
+@timer
+def waste_some_time(num_times):
+    for _ in range(num_times):
+        sum([i**2 for i in range(10000)])
+
 
 code = """<!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G8LLP1NRE9"></script>
@@ -49,3 +70,31 @@ if st.button('Make a Google Analytics request'):
   st.markdown(req.cookies._cookies)
 else:
   st.write('Request not Done')
+
+@timer
+def read_with_counter():
+  words = re.findall(r'\w+', open('t8.shakespeare.txt').read().lower())
+  return words
+if st.button('Read shakespeare with counter'):
+  words = read_with_counter()
+  st.write(collections.Counter(words).most_common(10))
+
+@timer
+def read_with_dico():
+  book = open('t8.shakespeare.txt', "r")
+  d = dict()
+  for line in book:
+      line = line.strip()
+      line = line.lower()
+      words = line.split(" ")
+      for word in words:
+          if word in d:
+              d[word] = d[word] + 1
+          else:
+              d[word] = 1
+  return d
+
+if st.button('Read shakespeare with dico'):
+  dico = read_with_dico()
+  st.write(collections.Counter(dico).most_common(10))
+  

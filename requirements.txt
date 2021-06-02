@@ -1,2 +1,5 @@
 streamlit
 pytrends
+matplotlib
+lxml
+pandas

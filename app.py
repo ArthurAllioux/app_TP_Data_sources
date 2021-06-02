@@ -1,7 +1,11 @@
 import streamlit as st
 import logging
 import requests
-
+import pytrends
+import pandas as pd
+import lxml
+from pytrends.request import TrendReq
+import matplotlib.pyplot as plt
 import os
 import re
 
@@ -26,9 +30,19 @@ st.title("Hello worl   d ! It's Arthur ALLIOUX")
 input = st.text_input('Variable', 'exemple')
 logging.warning('La variable est ' + input)
 st.write('The value is', input)
+pytrends = TrendReq(hl='en-US', tz=360)
+input1 = st.text_input('Recherche 1 ')
+input2 = st.text_input('Recherche 2 ')
+input3 = st.text_input('Recherche 3 ')
+if st.button('Search trend'):
+  keywords = [input1, input2, input3]
+  pytrends.build_payload(keywords, timeframe = 'today 3-m')
+  data = pytrends.interest_over_time()
+  st.line_chart(data)
+
 if st.button('Make a Google Analytics request'):
   req = requests.get("https://www.google.com/")
-  req2 = requests.get('https://analytics.google.com/analytics/web/#/p273040931/reports/defaulthome?params=_u..nav%3Ddefault')
+  req2 = requests.get('https://analytics.google.com/analytics/web/#/p273040931/reports/defaulthome?params=_u..nav%3Ddefault&key=AIzaSyCFZp_DJbQUHGrvvnktRejZ5REge7Rli9c')
   st.text(req2.status_code)
   st.markdown(req2.text)
   st.write('\n Request Done  ' + str(req))

@@ -21,6 +21,7 @@ def timer(func):
         end_time = time.perf_counter()      # 2
         run_time = end_time - start_time    # 3
         logging.warning(f"Finished {func.__name__!r} in {run_time:.4f} secs")
+
         return value
     return wrapper_timer
 
@@ -75,8 +76,20 @@ else:
 def read_with_counter():
   words = re.findall(r'\w+', open('t8.shakespeare.txt').read().lower())
   return words
+
+@timer
+def read_with_counter_100times():
+  tps_counter = {}
+  for i in range(10):
+    start_time = time.perf_counter() 
+    words = read_with_counter()  
+    end_time = time.perf_counter()   
+    run_time = end_time - start_time 
+    tps_counter[i]= run_time
+  return (words,tps_counter)
+
 if st.button('Read shakespeare with counter'):
-  words = read_with_counter()
+  words,tps_counter = read_with_counter_100times()
   st.write(collections.Counter(words).most_common(10))
 
 @timer
@@ -94,7 +107,17 @@ def read_with_dico():
               d[word] = 1
   return d
 
+@timer
+def read_with_dico_100times():
+  for i in range(100):
+    start_time = time.perf_counter() 
+    dico = read_with_dico()
+    end_time = time.perf_counter()   
+    run_time = end_time - start_time 
+    tps_counter[i]= run_time
+  return dico
+
 if st.button('Read shakespeare with dico'):
-  dico = read_with_dico()
+  dico = read_with_dico_100times()
   st.write(collections.Counter(dico).most_common(10))
   
